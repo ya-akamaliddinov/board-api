@@ -1,11 +1,11 @@
 from enum import Enum
 from typing import Annotated
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Path
 
-from .schema import ProjectCreateRequest, ProjectRequest, ProjectUpdateRequest
+from .schema import ProjectCreateRequest, ProjectRequest
 
-router = APIRouter(prefix="/posts")
+router = APIRouter(prefix="/projects")
 
 
 class SortOrder(str, Enum):
@@ -14,7 +14,7 @@ class SortOrder(str, Enum):
 
 
 @router.get("/{post_id}")
-async def get_post(path: ProjectRequest):
+async def get_post(post_id: Annotated[ProjectRequest, Path(ge=1)]):
     return {"status": "ok"}
 
 
@@ -23,8 +23,13 @@ async def create_post(data: Annotated[ProjectCreateRequest, Body()]): ...
 
 
 @router.put("/{post_id}")
-async def update_post(data: Annotated[ProjectUpdateRequest, Body()]): ...
+async def update_post(
+    post_id: Annotated[ProjectRequest, Path(ge=1)],
+    data: Annotated[ProjectCreateRequest, Body()]
+    ): ...
 
 
 @router.delete("/{post_id}")
-async def delete_post(path: ProjectRequest): ...
+async def delete_post(
+    post_id: Annotated[ProjectRequest, Path(ge=1)]
+    ): ...
