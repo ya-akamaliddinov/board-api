@@ -14,14 +14,14 @@ class SortOrder(str, Enum):
 async def get_post():
     return {"status": "ok"}
 
+
 @router.post("/{post_id}")
-async def create_post(post_id: int):
-    ...
+async def create_post(post_id: int): ...
+
 
 @router.put("/{post_id}")
-async def update_post(post_id: int):
-    ...
+async def update_post(post_id: int): ...
+
 
 @router.delete("/{post_id}")
-async def delete_post(post_id):
-    ...
+async def delete_post(post_id): ...
