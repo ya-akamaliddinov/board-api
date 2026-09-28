@@ -1,9 +1,8 @@
 from fastapi import FastAPI
-
+from posts.routes import router as post_router
+from rand.routes import router as rand_router
 
 app = FastAPI()
 
-
-@app.get("/")
-def hello_world():
-    return {"Score": 10}
+app.include_router(post_router)
+app.include_router(rand_router)
