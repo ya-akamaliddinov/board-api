@@ -1,8 +1,6 @@
 from fastapi import FastAPI
-from posts.routes import router as post_router
-from rand.routes import router as rand_router
+from projects.routes import router as projects_router
 
 app = FastAPI()
 
-app.include_router(post_router)
-app.include_router(rand_router)
+app.include_router(projects_router)
