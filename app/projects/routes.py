@@ -3,9 +3,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Path
 
-from .schema import ProjectRequest
+from .schema import ProjectCreateRequest, ProjectResponse, ProjectUpdateRequest
 
-router = APIRouter(prefix="/projects")
+router = APIRouter(prefix="/v1/projects", tags=["Projects"])
 
 
 class SortOrder(str, Enum):
@@ -13,23 +13,45 @@ class SortOrder(str, Enum):
     desc = "desc"
 
 
-@router.get("/{post_id}")
+@router.get(
+    "/{post_id}",
+    response_model=ProjectResponse,
+    status_code=200,
+    summary="Получить проект по ID", 
+    description="""Получает проект по ID""",
+)
 async def get_post(post_id: Annotated[int, Path(ge=1)]):
-    return {"status": "ok"}
+    return ProjectResponse(post_id=post_id, content="smth")
 
 
-@router.post("/")
-async def create_post(data: Annotated[ProjectRequest, Body()]): ...
+@router.post(
+    "/",
+    response_model=ProjectResponse,
+    status_code=204,
+    summary="Создать новый проект", 
+    description=""""Создают новый проект"""
+)
+async def create_post(data: Annotated[ProjectCreateRequest, Body()]):
+    return ProjectResponse(post_id=1, content=data.content)
 
 
-@router.put("/{post_id}")
+@router.put(
+    "/{post_id}",
+    response_model=ProjectResponse,
+    status_code=200,
+    summary="Обновить проект по ID",
+    description=""""Обновляет проект по ID""",
+)
 async def update_post(
-    post_id: Annotated[int, Path(ge=1)],
-    data: Annotated[ProjectRequest, Body()]
-    ): ...
+    post_id: Annotated[int, Path(ge=1)], data: Annotated[ProjectUpdateRequest, Body()]
+):
+    return ProjectResponse(post_id=post_id, content=data.content)
 
 
-@router.delete("/{post_id}")
-async def delete_post(
-    post_id: Annotated[int, Path(ge=1)]
-    ): ...
+@router.delete(
+        "/{post_id}", 
+        response_model=None,
+        status_code=204,
+        summary="Удалить проект по ID", 
+        description="""Удаляет проект по ID""")
+async def delete_post(post_id: Annotated[int, Path(ge=1)]): ...
