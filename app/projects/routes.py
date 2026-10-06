@@ -3,6 +3,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Path
 
+from app.core.settings import SettingsDeps
+
 from .schema import ProjectCreateRequest, ProjectResponse, ProjectUpdateRequest
 from .service import ProjectServiceDeps
 
@@ -21,8 +23,13 @@ class SortOrder(str, Enum):
     summary="Получить проект по ID",
     description="""Получает проект по ID""",
 )
-async def get_post(servise: ProjectServiceDeps, post_id: Annotated[int, Path(ge=1)]):
+async def get_post(
+    servise: ProjectServiceDeps,
+    settings: SettingsDeps,
+    post_id: Annotated[int, Path(ge=1)],
+):
     res = servise.get(post_id)
+    print(settings.database_url, settings.secret)
     return ProjectResponse(post_id=res, content="smth")
 
 

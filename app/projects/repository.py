@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 
 
-class ProjectRepository():
+class ProjectRepository:
     def get_project(self, post_id: int):
         return post_id
 
