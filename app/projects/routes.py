@@ -31,7 +31,7 @@ async def get_post(
     post_id: Annotated[int, Path(ge=1)],
 ):
     res = servise.get(post_id)
-    logger.info("ID: %s", res)
+    logger.info("Get project by id=%s", post_id)
     return ProjectResponse(post_id=res, content="smth")
 
 
