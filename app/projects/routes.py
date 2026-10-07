@@ -1,3 +1,4 @@
+import logging
 from enum import Enum
 from typing import Annotated
 
@@ -10,6 +11,7 @@ from .service import ProjectServiceDeps
 
 router = APIRouter(prefix="/v1/projects", tags=["Projects"])
 
+logger = logging.getLogger(__name__)
 
 class SortOrder(str, Enum):
     asc = "asc"
@@ -29,7 +31,7 @@ async def get_post(
     post_id: Annotated[int, Path(ge=1)],
 ):
     res = servise.get(post_id)
-    print(settings.database_url, settings.secret)
+    logger.info("Get project by id=%s", post_id)
     return ProjectResponse(post_id=res, content="smth")
 
 

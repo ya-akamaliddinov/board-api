@@ -11,7 +11,7 @@ class AppSettings(BaseSettings):
 
 
 class DatabaseSettings(BaseSettings):
-    ulr: str
+    url: str
 
 
 class AuthSettings(BaseSettings):
