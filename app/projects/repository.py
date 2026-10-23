@@ -1,15 +1,55 @@
 from typing import Annotated
 
 from fastapi import Depends
+from sqlalchemy import select
+
+from app.core.db import DBSessionDeps
+from app.projects.model import Post
 
 
-class ProjectRepository:
-    def get_project(self, post_id: int):
-        return post_id
+class PostRepository:
+    def __init__(self, session: DBSessionDeps):
+        self.session = session
+
+    async def get_post_by_id(self, post_id: int):
+        res = await self.session.get(Post, post_id)
+        if res.is_deleted:
+            return None
+        return res
+
+    async def search(self, offset: int, limit: int):
+        query = (
+            select(Post)
+            .order_by(Post.id)
+            .offset(offset)
+            .limit(limit)
+            .where(Post.is_deleted == False)
+        )
+        result = await self.session.execute(query)
+        posts = list(result.scalars().all())
+
+        return posts
+
+    async def save(self, post: Post):
+        self.session.add(post)
+        await self.session.commit()
+        await self.session.refresh(post)
+        return post
+
+    async def update_like(self, post: Post):
+        post.likes_count += 1
+        await self.session.commit()
+        await self.session.refresh(post)
+        return post
+
+    async def delete(self, post: Post):
+        post.is_deleted = True
+        await self.session.commit()
+        await self.session.refresh(post)
 
 
-def get_project_repository():
-    return ProjectRepository()
+def get_post_repository(session: DBSessionDeps):
+    return PostRepository(session)
 
 
-ProjectRepositoryDeps = Annotated[ProjectRepository, Depends(get_project_repository)]
+PostRepositoryDeps = Annotated[PostRepository, Depends(get_post_repository)]
