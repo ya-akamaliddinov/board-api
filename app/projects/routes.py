@@ -94,10 +94,10 @@ async def update_post(
     return PostResponse.model_validate(res)
 
 
-@router.put(
+@router.post(
     "/{post_id}/like",
     response_model=PostResponse,
-    status_code=201,
+    status_code=200,
     summary="Увеличить like поста",
     description="""Увеличить like поста по ID""",
 )

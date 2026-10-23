@@ -34,17 +34,18 @@ class PostRepository:
         await self.session.refresh(post)
         return post
 
-    async def update_like(self, post_id: int, post: Post):
+    async def update_like(self, post_id: int) -> Post | None:
         update_query = (
             update(Post)
             .where(Post.id == post_id, Post.is_deleted == False)
             .values(likes_count=Post.likes_count + 1)
             .returning(Post)
         )
-        await self.session.execute(update_query)
+        result = await self.session.execute(update_query)
+        updated_post = result.scalar_one_or_none()
+
         await self.session.commit()
-        await self.session.refresh(post)
-        return post
+        return updated_post
 
     async def delete(self, post: Post):
         post.is_deleted = True

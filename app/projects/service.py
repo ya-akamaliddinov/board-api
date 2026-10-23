@@ -40,13 +40,13 @@ class PostService:
         return await self.repo.save(post)
 
     async def like(self, post_id: int):
-        post = await self.repo.get_post_by_id(post_id)
-        if post is None or post.is_deleted:
+        post = await self.repo.update_like(post_id)
+
+        if post is None:
             raise HTTPException(
                 status_code=404, detail="Post not found or was deleted."
             )
-
-        return await self.repo.update_like(post_id, post)
+        return post
 
     async def delete(self, post_id: int):
         post = await self.repo.get_post_by_id(post_id)
