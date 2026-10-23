@@ -13,7 +13,7 @@ class PostService:
 
     async def read(self, post_id: int):
         post = await self.repo.get_post_by_id(post_id)
-        if post is None:
+        if post is None or post.is_deleted:
             raise HTTPException(
                 status_code=404, detail="Post not found or was deleted."
             )
@@ -29,11 +29,10 @@ class PostService:
 
     async def update(self, post_id: int, data: PostUpdateRequest):
         post = await self.repo.get_post_by_id(post_id)
-        if post is None:
+        if post is None or post.is_deleted:
             raise HTTPException(
                 status_code=404, detail="Post not found or was deleted."
             )
-
         patch = data.model_dump(exclude_unset=True)
         for field, value in patch.items():
             setattr(post, field, value)
@@ -42,16 +41,16 @@ class PostService:
 
     async def like(self, post_id: int):
         post = await self.repo.get_post_by_id(post_id)
-        if post is None:
+        if post is None or post.is_deleted:
             raise HTTPException(
                 status_code=404, detail="Post not found or was deleted."
             )
 
-        return await self.repo.update_like(post)
+        return await self.repo.update_like(post_id, post)
 
     async def delete(self, post_id: int):
         post = await self.repo.get_post_by_id(post_id)
-        if post is None:
+        if post is None or post.is_deleted:
             raise HTTPException(
                 status_code=404, detail="Post not found or was deleted."
             )
