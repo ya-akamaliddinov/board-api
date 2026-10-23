@@ -15,11 +15,11 @@ class PostResponse(BaseModel):
 
 
 class PostCreateRequest(BaseModel):
-    content: str = Field(min_length=280)
+    content: str = Field(min_length=1, max_length=280)
 
 
 class PostUpdateRequest(BaseModel):
-    content: str = Field(min_length=280)
+    content: str = Field(min_length=1, max_length=280)
 
 
 class PostSearchParams(BaseModel):
