@@ -16,6 +16,7 @@ class DatabaseSettings(BaseSettings):
 
 class AuthSettings(BaseSettings):
     jwt_secret: str
+    jwt_expired_minutes: int
 
 
 class Settings(BaseSettings):
@@ -24,8 +25,10 @@ class Settings(BaseSettings):
     )
 
     database_url: str
+    database_url_sync: str
     secret: str
     minimal_post_debounce_time: int
+    jwt_expired_minutes: int
 
     @property
     def app(self) -> AppSettings:
@@ -37,7 +40,7 @@ class Settings(BaseSettings):
 
     @property
     def auth(self) -> AuthSettings:
-        return AuthSettings(jwt_secret=self.secret)
+        return AuthSettings(jwt_secret=self.secret, jwt_expired_minutes=self.jwt_expired_minutes)
 
 
 def get_settings(request: Request):
