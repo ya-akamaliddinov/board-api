@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import String, false, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String, false, func, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
 
@@ -19,13 +19,20 @@ class Post(Base):
     )
     likes_count: Mapped[int] = mapped_column(default=0, server_default="0")
     is_deleted: Mapped[bool] = mapped_column(default=False, server_default=false())
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    user: Mapped["User"] = relationship(back_populates="posts")
 
     def __init__(
         self,
         content: str,
+        user_id: int,
         likes_count: int | None = None,
         is_deleted: bool = False,
     ):
         self.content = content
         self.likes_count = likes_count
         self.is_deleted = is_deleted
+        self.user_id = user_id
