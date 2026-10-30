@@ -19,8 +19,8 @@ class Post(Base):
     )
     likes_count: Mapped[int] = mapped_column(default=0, server_default="0")
     is_deleted: Mapped[bool] = mapped_column(default=False, server_default=false())
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True
     )
 
     user: Mapped["User"] = relationship(back_populates="posts")
@@ -28,7 +28,7 @@ class Post(Base):
     def __init__(
         self,
         content: str,
-        user_id: int,
+        user_id: int | None = None,
         likes_count: int | None = None,
         is_deleted: bool = False,
     ):

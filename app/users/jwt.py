@@ -15,7 +15,7 @@ def create_access_token(user_id: int) -> str:
 
 def decode_access_token(token: str) -> int | None:
     try:
-        payload = jwt.decode(token, settings.auth.jwt_secret, algorithm=ALGORITHM)
+        payload = jwt.decode(token, settings.auth.jwt_secret, algorithms=[ALGORITHM])
         return int(payload["sub"])
     except (jwt.PyJWTError, ValueError, KeyError):
         return None

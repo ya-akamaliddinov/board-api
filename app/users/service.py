@@ -19,7 +19,7 @@ class UserService:
             raise HTTPException(status_code=400, detail="User already exists")
 
         hashed = hash_password(data.password)
-        user = User(email=data.email, password_hash=hashed)
+        user = User(name=data.name, email=data.email, password_hash=hashed)
         saved_user = await self.repo.create(user)
         return create_access_token(saved_user.id)
 

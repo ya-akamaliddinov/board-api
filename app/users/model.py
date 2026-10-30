@@ -11,6 +11,7 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[int] = mapped_column(String())
     email: Mapped[str] = mapped_column(
         String(256), unique=True, index=True, nullable=False
     )
@@ -19,7 +20,8 @@ class User(Base):
 
     posts: Mapped[List["Post"]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
-    def __init__(self, email: str, password_hash: str):
+    def __init__(self, name: str, email: str, password_hash: str):
+        self.name = name
         self.email = email
         self.password_hash = password_hash
 
