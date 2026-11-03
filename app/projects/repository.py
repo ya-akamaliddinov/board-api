@@ -15,7 +15,7 @@ class PostRepository:
     async def get_latest_post_by_author(self, author_id: int) -> Post | None:
         query = (
             select(Post)
-            .where(Post.author_id == author_id)
+            .where(Post.author_id == author_id,)
             .order_by(Post.created_at.desc())
             .limit(1)
         )
@@ -25,6 +25,7 @@ class PostRepository:
     async def get_post_by_id(self, post_id: int):
         query = (
         select(Post)
+        .where(Post.is_deleted == False)
         .options(selectinload(Post.replies)) # Сразу подгружаем ответы!
         .where(Post.id == post_id)
     )

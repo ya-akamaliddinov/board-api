@@ -40,7 +40,7 @@ async def search_post(
 ):
     posts = await servise.list(params)
     return PostSearchResponce(
-        items=[PostResponse.model_validate(t) for t in posts],
+        items=[PostSimpleResponse.model_validate(t) for t in posts],
         offset=params.offset,
         limit=params.limit,
     )
@@ -86,7 +86,7 @@ async def create_post(
 
 @router.post(
         "/reply",
-        response_model=PostResponse,
+        response_model=PostSimpleResponse,
         status_code=200
 )
 async def reply(
@@ -95,12 +95,12 @@ async def reply(
     service: PostServiceDeps,
 ):
     res = await service.reply(data, current_user.id)
-    return PostResponse.model_validate(res)
+    return PostSimpleResponse.model_validate(res)
     
 
 @router.put(
     "/{post_id}",
-    response_model=PostResponse,
+    response_model=PostSimpleResponse,
     status_code=200,
     summary="Обновить проект по ID",
     description=""""Обновляет проект по ID""",
@@ -112,12 +112,12 @@ async def update_post(
 ):
     res = await service.update(post_id, data)
 
-    return PostResponse.model_validate(res)
+    return PostSimpleResponse.model_validate(res)
 
 
 @router.post(
     "/{post_id}/like",
-    response_model=PostResponse,
+    response_model=PostSimpleResponse,
     status_code=200,
     summary="Увеличить like поста",
     description="""Увеличить like поста по ID""",
@@ -128,7 +128,7 @@ async def update_like_post(
 ):
     res = await service.like(post_id)
 
-    return PostResponse.model_validate(res)
+    return PostSimpleResponse.model_validate(res)
 
 
 @router.delete(

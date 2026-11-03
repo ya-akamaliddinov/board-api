@@ -18,19 +18,7 @@ class PostService:
     def __init__(self, repo: PostRepository):
         self.repo = repo
 
-    async def read(self, post_id: int):
-        post = await self.repo.get_post_by_id(post_id)
-        if post is None or post.is_deleted:
-            raise HTTPException(
-                status_code=404, detail="Post not found or was deleted."
-            )
-
-        return post, post.replies
-
-    async def list(self, params: PostSearchParams):
-        return await self.repo.search(offset=params.offset, limit=params.limit)
-
-    async def create(self, data: PostCreateRequest, author_id: int):
+    async def _check_debounce(self, author_id: int):
         # 1. Проверяем последний пост пользователя
         last_post = await self.repo.get_latest_post_by_author(author_id)
         
@@ -51,6 +39,20 @@ class PostService:
                     detail=f"Слишком частые публикации. Подождите еще {remaining} сек."
                 )
 
+    async def read(self, post_id: int):
+        post = await self.repo.get_post_by_id(post_id)
+        if post is None or post.is_deleted:
+            raise HTTPException(
+                status_code=404, detail="Post not found or was deleted."
+            )
+
+        return post, post.replies
+
+    async def list(self, params: PostSearchParams):
+        return await self.repo.search(offset=params.offset, limit=params.limit)
+
+    async def create(self, data: PostCreateRequest, author_id: int):
+        await self._check_debounce(author_id)
         # 2. Если всё ок, создаем пост (не забудьте про parent_id, если это ответ!)
         post = Post(
             content=data.content, 
@@ -60,6 +62,7 @@ class PostService:
         return await self.repo.save(post)
 
     async def reply(self, data: PostReplyRequest, author_id: int):
+        await self._check_debounce(author_id)
         post = await self.repo.get_post_by_id(data.parent_id)
         if post is None or post.is_deleted:
             raise HTTPException(
