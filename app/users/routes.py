@@ -4,12 +4,25 @@ from fastapi import APIRouter, HTTPException
 
 from app.users.schema import UserRegisterRequest, JWTResponce, UserLoginRequest
 from app.users.service import UserServiceDeps
-
+from app.users.schema import UserResponce
+from app.users.current_user import CurentUserDeps
 
 router = APIRouter(prefix="/v1/users", tags=["Users"])
 
 logger = logging.getLogger(__name__)
 
+
+
+@router.get(
+        "/me",
+        response_model=UserResponce,
+        status_code=200
+)
+async def get_me(
+    current_user: CurentUserDeps
+):
+    return UserResponce(name=current_user.name, email=current_user.email)
+    
 
 @router.post(
     "/register",

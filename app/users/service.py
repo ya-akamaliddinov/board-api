@@ -13,6 +13,10 @@ class UserService:
     def __init__(self, repo: UserRepositoryDeps):
         self.repo = repo
 
+    async def get(self, user_id: int):
+        user = await self.repo.get_by_id(user_id)
+        return user
+
     async def create(self, data: UserRegisterRequest):
         user = await self.repo.get_by_email(data.email)
         if user:

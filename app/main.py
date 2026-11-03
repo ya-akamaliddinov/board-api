@@ -11,7 +11,11 @@ def create_app() -> FastAPI:
         title=settings.app.name,
         description="API для работы приложения",
         version=settings.app.version,
-        openapi_tags=[({"name": "Projects", "description": "Управление проектами."})],
+        openapi_tags=[
+            ({"name": "Posts", "description": "Управление постами."}),
+            ({"name": "Users", "description": "Управление пользователя."})
+            
+            ],
     )
 
     new_app.state.settings = settings
