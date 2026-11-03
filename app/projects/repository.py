@@ -26,7 +26,7 @@ class PostRepository:
         query = (
         select(Post)
         .where(Post.is_deleted == False)
-        .options(selectinload(Post.replies)) # Сразу подгружаем ответы!
+        .options(selectinload(Post.replies.and_(Post.is_deleted==False))) # Сразу подгружаем ответы!
         .where(Post.id == post_id)
     )
         result = await self.session.execute(query)
